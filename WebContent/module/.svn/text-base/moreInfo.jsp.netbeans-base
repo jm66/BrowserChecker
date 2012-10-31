@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<%@page import="blackboard.platform.intl.LocaleManagerFactory,
+                blackboard.platform.intl.BbLocale,
+                blackboard.platform.plugin.PlugInUtil,
+                java.util.ResourceBundle,
+                blackboard.data.user.User,
+                blackboard.data.user.User.SystemRole,
+                durham.ng.browser.HelpOptions"
+errorPage="../error.jsp"
+%>
+
+<%@ taglib uri="/bbNG" prefix="bbNG"%> 
+
+<bbNG:genericPage ctxId="ctx" title="Test Browser More Info Page">
+<%
+final String vendorId = "dur";
+final String handle = "browserCheck";
+String cssUrl = PlugInUtil.getUri(vendorId, handle, "styles/browserCheck.css");
+String jsFile = PlugInUtil.getUri(vendorId, handle, "script/browserTests.js");
+%>
+<bbNG:cssFile href="<%=cssUrl%>"/>
+<bbNG:jsFile href="<%=jsFile%>"/>
+<%
+// use the BbLocale to select appropriate text to display to the user
+BbLocale bbLocale = LocaleManagerFactory.getInstance().getLocale();
+ResourceBundle rBundle = ResourceBundle.getBundle( "durham/ng/browser/international", bbLocale.getLocaleObject() );
+final String breadcrumbName = rBundle.getString("root_Breadcrumb");
+final String pageTitle = rBundle.getString("testBrowser.moreInfo");
+final String pageInstructions = rBundle.getString("moreInfo.pageInstructions");
+
+// get variables needed to construct the breadCrumb trail
+final String tabUrl = request.getParameter("tabUrl");
+
+final String backUrl = "testBrowser.jsp?tabUrl=" + tabUrl;
+
+HelpOptions hOptions = new HelpOptions(bbLocale.getLocaleObject());
+hOptions.load();
+
+User user = ctx.getUser();
+boolean isSysAdmin = false;
+if(user.getSystemRole() == SystemRole.SYSTEM_ADMIN){
+    isSysAdmin = true;
+}
+
+%>
+<bbNG:pageHeader instructions="<%=pageInstructions%>">
+    <bbNG:breadcrumbBar environment="PORTAL" >
+        <bbNG:breadcrumb href="<%=backUrl%>"> <%=breadcrumbName%></bbNG:breadcrumb>
+        <bbNG:breadcrumb> <%=pageTitle%></bbNG:breadcrumb>
+    </bbNG:breadcrumbBar>
+    <bbNG:pageTitleBar iconUrl="../images/info.png" showTitleBar="true" title="<%=pageTitle%>"/>
+</bbNG:pageHeader>
+
+
+<p><span class="browserSectionHeader"><%=rBundle.getString("moreInfo.Local.Help")%></span><br>
+<%=hOptions.getHelpTextWithWarning(isSysAdmin)%></p>
+
+<p><%=rBundle.getString("moreInfo.Local.Help.Website")%>&nbsp;<%=hOptions.getHelpUrlAsLink()%><br>
+<%=rBundle.getString("moreInfo.Local.Help.Contact")%> <%=hOptions.getHelpEmailAsLink()%></p>
+<hr>
+    
+    
+<p><%=rBundle.getString("moreInfo.Remainder")%></p>
+<p><a href='http://<%=hOptions.getWikiCountryCode()%>.wikipedia.org' target='_blank'><img src='../images/logo_wpedia.gif' width='18' height='13' alt='Wikipedia' border='0' valign='bottom'></a>&nbsp;<%=rBundle.getString("moreInfo.Wikipedia")%>&nbsp;<a href='http://<%=hOptions.getWikiCountryCode()%>.wikipedia.org' target='_blank'>Wikipedia</a></p>
+<hr>
+
+
+<p><span class="browserSectionHeader"><%=rBundle.getString("testBrowser.Required")%></span><br>
+<i><%=rBundle.getString("testBrowser.Required.text")%></i></p>
+
+<% 
+// set up some Strings to populate the entries:
+final String jsTitle = rBundle.getString("moreInfo.JavaScript");
+final String jsUrl = "http://" + hOptions.getWikiCountryCode() + ".wikipedia.org/wiki/JavaScript";
+final String jsBody = rBundle.getString("moreInfo.JavaScript.text");
+
+final String cookiesTitle = rBundle.getString("moreInfo.Cookies");
+final String cookiesUrl = "http://" + hOptions.getWikiCountryCode() + ".wikipedia.org/wiki/HTTP_cookie";
+final String cookiesBody = rBundle.getString("moreInfo.Cookies.text");
+
+final String javaTitle = rBundle.getString("moreInfo.Java");
+final String javaUrl = "http://" + hOptions.getWikiCountryCode() + ".wikipedia.org/wiki/Java_programming_language";
+final String javaBody = rBundle.getString("moreInfo.Java.text") + System.getProperty("java.version") + rBundle.getString("moreInfo.Java.text2") + " " + hOptions.getHelpEmailAsLink() + rBundle.getString("moreInfo.Java.text3");
+
+%>
+<bbNG:contentList>
+    <bbNG:contentListItem iconUrl="../images/logo_jscript.gif" id="javascript" title="<%=jsTitle%>" titleColor="#660066" url="<%=jsUrl%>"><%=jsBody%></bbNG:contentListItem>
+    <bbNG:contentListItem iconUrl="../images/cookies.png" id="cookies" title="<%=cookiesTitle%>" titleColor="#660066" url="<%=cookiesUrl%>"><%=cookiesBody%></bbNG:contentListItem>
+    <bbNG:contentListItem iconUrl="../images/logo_java.gif" id="java" title="<%=javaTitle%>" titleColor="#660066" url="<%=javaUrl%>"><%=javaBody%></bbNG:contentListItem>
+</bbNG:contentList>
+
+
+<br>
+<p><span class="browserSectionHeader"><%=rBundle.getString("testBrowser.Optional")%></span><br>
+<i><%=rBundle.getString("testBrowser.Optional.text")%></i></p>
+
+<% 
+// set up some Strings to populate the entries:
+final String flashTitle = rBundle.getString("moreInfo.Flash");
+final String flashUrl = "http://" + hOptions.getWikiCountryCode() + ".wikipedia.org/wiki/Macromedia_Flash_Player";
+final String flashBody = rBundle.getString("moreInfo.Flash.text");
+
+final String shockTitle = rBundle.getString("moreInfo.Shock");
+final String shockUrl = "http://" + hOptions.getWikiCountryCode() + ".wikipedia.org/wiki/Macromedia_Shockwave";
+final String shockBody = rBundle.getString("moreInfo.Shock.text");
+
+final String wmpTitle = rBundle.getString("moreInfo.WMP");
+final String wmpUrl = "http://" + hOptions.getWikiCountryCode() + ".wikipedia.org/wiki/Windows_Media_Player";
+final String wmpBody = rBundle.getString("moreInfo.WMP.text");
+
+final String realTitle = rBundle.getString("moreInfo.Real");
+final String realUrl = "http://" + hOptions.getWikiCountryCode() + ".wikipedia.org/wiki/RealPlayer";
+final String realBody = rBundle.getString("moreInfo.Real.text");
+
+final String qtTitle = rBundle.getString("moreInfo.QT");
+final String qtUrl = "http://" + hOptions.getWikiCountryCode() + ".wikipedia.org/wiki/QuickTime";
+final String qtBody = rBundle.getString("moreInfo.QT.text");
+
+final String svgTitle = rBundle.getString("moreInfo.SVG");
+final String svgUrl = "http://" + hOptions.getWikiCountryCode() + ".wikipedia.org/wiki/SVG";
+final String svgBody = rBundle.getString("moreInfo.SVG.text");
+
+final String acrobatTitle = rBundle.getString("moreInfo.Acrobat");
+final String acrobatUrl = "http://" + hOptions.getWikiCountryCode() + ".wikipedia.org/wiki/Acrobat_Reader";
+final String acrobatBody = rBundle.getString("moreInfo.Acrobat.text");
+
+%>
+<bbNG:contentList>
+    <bbNG:contentListItem iconUrl="../images/logo_flash.gif" id="flash" title="<%=flashTitle%>" titleColor="#660066" url="<%=flashUrl%>"><%=flashBody%></bbNG:contentListItem>
+    <bbNG:contentListItem iconUrl="../images/logo_shock.gif" id="shockwave" title="<%=shockTitle%>" titleColor="#660066" url="<%=shockUrl%>"><%=shockBody%></bbNG:contentListItem>
+    <bbNG:contentListItem iconUrl="../images/logo_wmp.gif" id="windows_media_player" title="<%=wmpTitle%>" titleColor="#660066" url="<%=wmpUrl%>"><%=wmpBody%></bbNG:contentListItem>
+    <bbNG:contentListItem iconUrl="../images/logo_real.gif" id="real_player" title="<%=realTitle%>" titleColor="#660066" url="<%=realUrl%>"><%=realBody%></bbNG:contentListItem>
+    <bbNG:contentListItem iconUrl="../images/logo_qtime.gif" id="quicktime" title="<%=qtTitle%>" titleColor="#660066" url="<%=qtUrl%>"><%=qtBody%></bbNG:contentListItem>
+    <bbNG:contentListItem iconUrl="../images/logo_svg.gif" id="svg" title="<%=svgTitle%>" titleColor="#660066" url="<%=svgUrl%>"><%=svgBody%></bbNG:contentListItem>
+    <bbNG:contentListItem iconUrl="../images/logo_pdf.gif" id="acrobat" title="<%=acrobatTitle%>" titleColor="#660066" url="<%=acrobatUrl%>"><%=acrobatBody%></bbNG:contentListItem>
+</bbNG:contentList>
+<br>
+<p><span class="browserSectionHeader"><%=rBundle.getString("testPopUp.Title")%></span><br>
+<i><%=rBundle.getString("moreInfo.PopUp.text")%></i></p>
+    
+<p><%=rBundle.getString("moreInfo.PassAlert.Text")%><br><br>
+<img src='../images/alert_msg.png' width='326' height='173' alt='<%=rBundle.getString("moreInfo.PassAlert.Alt")%>' title='<%=rBundle.getString("moreInfo.PassAlert.Title")%>'>
+</p>
+
+<p><%=rBundle.getString("moreInfo.PassPopUp.Text")%><br><br>
+<img src='../images/popup_msg.png' width='529' height='246' alt='<%=rBundle.getString("moreInfo.PassPopUp.Alt")%>' title='<%=rBundle.getString("moreInfo.PassPopUp.Title")%>'>
+</p>
+
+
+<bbNG:okButton url="<%=backUrl%>"/>
+
+</bbNG:genericPage>

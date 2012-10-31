@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<%@page import="blackboard.platform.intl.LocaleManagerFactory,
+                blackboard.platform.intl.BbLocale,
+                blackboard.platform.intl.BundleManagerFactory,
+                blackboard.platform.intl.BbResourceBundle,
+                blackboard.platform.plugin.PlugInUtil,
+                java.util.ResourceBundle,
+                durham.ng.browser.*"
+errorPage="../error.jsp"
+%>
+
+<%@ taglib uri="/bbNG" prefix="bbNG"%> 
+
+<bbNG:genericPage ctxId="ctx" title="Test Browser Video Sample Page">
+<%
+final String vendorId = "dur";
+final String handle = "browserCheck";
+String cssUrl = PlugInUtil.getUri(vendorId, handle, "styles/browserCheck.css");
+%>
+<bbNG:cssFile href="<%=cssUrl%>"/>
+
+<%
+// use the BbLocale to select appropriate text to display to the user
+BbLocale bbLocale = LocaleManagerFactory.getInstance().getLocale();
+ResourceBundle rBundle = ResourceBundle.getBundle( "durham/ng/browser/international", bbLocale.getLocaleObject() );
+  
+
+String fileRequested = request.getParameter("rF");
+
+// get variables needed for navigation
+final String pageTitle = rBundle.getString("embeddedVideo.pageTitle");
+final String pageInstructions = rBundle.getString("embeddedVideo.pageInstructions");
+
+String paragraphTitleKey = "embeddedVideo." + fileRequested + ".paragraphTitle";
+String paragraphTitle = rBundle.getString(paragraphTitleKey);
+
+String bodyTextKey = "embeddedVideo." + fileRequested + ".bodyText";
+String bodyText = rBundle.getString(bodyTextKey);
+
+String contentIconKey = "embeddedVideo." + fileRequested + ".iconUrl";
+String contentIcon = rBundle.getString(contentIconKey); // e.g. ../samples/mov.png
+
+String contentUrlKey = "embeddedVideo." + fileRequested + ".contentUrl";
+String contentUrl = rBundle.getString(contentUrlKey); // e.g. ../samples/sample.mov
+
+String contentBodyKey = "embeddedVideo." + fileRequested + ".contentBody";
+String contentBody = rBundle.getString(contentBodyKey); // e.g. ../images/qt.png
+
+String linkTitle = rBundle.getString("embeddedAudio.downloadFile");
+    
+// get variables needed for navigation
+String backWindow = rBundle.getString("language.back");
+String backUrl = "javascript:history.go(-1);";  
+String closeWindow = rBundle.getString("language.close");
+String closeUrl = "javascript:window.close();";    
+%>
+         
+<bbNG:pageHeader instructions="<%=pageInstructions%>">
+    <bbNG:pageTitleBar iconUrl="../images/video-icon.jpg" showTitleBar="true" title="<%=pageTitle%>"/>
+</bbNG:pageHeader>
+
+        
+<p><span class="browserSectionHeader"><%=paragraphTitle%></span><br>
+<%=bodyText%></p>
+
+<bbNG:contentList>
+    <bbNG:contentListItem iconUrl="<%=contentIcon%>" id="contentSample" title="<%=linkTitle%>" titleColor="#660066" url="<%=contentUrl%>"><%=contentBody%></bbNG:contentListItem>
+</bbNG:contentList>
+
+<br>
+
+<bbNG:button label="<%=backWindow%>" url="<%=backUrl%>"/>&nbsp;<bbNG:button label="<%=closeWindow%>" url="<%=closeUrl%>"/>
+
+</bbNG:genericPage>

@@ -1,0 +1,318 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<%--
+    Document   : module/testBrowser.jsp
+    Created on : 30-Oct-2008, 10:31:46
+    Author     : Dr Malcolm Murray
+--%>
+<%@ page info="Browser Test Tool" language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
+<%@page import="java.text.DecimalFormat,
+                blackboard.platform.plugin.PlugInUtil,
+                blackboard.platform.intl.LocaleManagerFactory,
+                blackboard.platform.intl.BbLocale,
+                java.util.ResourceBundle,
+                java.util.ArrayList,
+                java.util.Iterator,
+                durham.ng.browser.*"
+        errorPage="../error.jsp"%>
+
+<%@ taglib uri="/bbNG" prefix="bbNG"%>
+<bbNG:genericPage ctxId="ctx" title="Test Browser Page">
+<% 
+final String vendorId = "dur";
+final String handle = "browserCheck";
+
+String jsFile = PlugInUtil.getUri(vendorId, handle, "script/browserTests.js");
+String cssUrl = PlugInUtil.getUri(vendorId, handle, "styles/browserCheck.css");
+%>
+<bbNG:cssFile href="<%=cssUrl%>"/>
+<bbNG:jsFile href="<%=jsFile%>"/>
+<%
+// use the BbLocale to select appropriate text to display to the user
+BbLocale bbLocale = LocaleManagerFactory.getInstance().getLocale();
+ResourceBundle rBundle = ResourceBundle.getBundle( "durham/ng/browser/international", bbLocale.getLocaleObject() );
+
+// get variables needed to construct the breadCrumb trail and other navigation tasks
+String tabUrl = request.getParameter("tabUrl");
+
+HelpOptions hOptions = new HelpOptions(bbLocale.getLocaleObject());
+hOptions.load();
+boolean displayOffCampusButton = hOptions.isOffCampusButtonDisplayed();
+
+// now declare all the standard text items to keep Tomcat 6 happy:
+final String breadcrumbName = rBundle.getString("root_Breadcrumb");
+final String pageInstructions = rBundle.getString("testBrowser.pageInstructions");
+final String helpPage = "help.jsp?tabUrl=" + tabUrl;
+final String popUpUrl = "testPopUp.jsp";
+
+final String actionButton1Title = rBundle.getString("testBrowser.moreInfo");
+final String actionButton1Url = "moreInfo.jsp?tabUrl=" + tabUrl;
+final String actionButton2Title = rBundle.getString("testBrowser.offCampus");
+final String actionButton2Url = "offCampus.jsp?tabUrl=" + tabUrl;
+final String actionButton3Title = rBundle.getString("testBrowser.credits");
+final String actionButton3Url = "credits.jsp?tabUrl=" + tabUrl;
+
+final String otherTests = rBundle.getString("testBrowser.otherTests");
+final String languagesText = rBundle.getString("languages.languages");
+final String languagesUrl = "javascript:checkBigPopUp('languages.jsp?tabUrl=" + tabUrl + "');";
+final String mediaText = rBundle.getString("testBrowser.Audio.Video");
+final String mediaUrl = "javascript:checkBigPopUp('media.jsp?tabUrl=" + tabUrl + "');";
+final String vtbeText = rBundle.getString("testBrowser.vtbe");
+final String vtbeUrl = "javascript:checkBigPopUp('vtbe.jsp?tabUrl=" + tabUrl + "');";
+
+
+// need to add these fields to the request as the actionMenuItem tag is scriptless :-(
+// use JSTL tags to set them later in the bbNG entry
+request.setAttribute( "otherTests", otherTests );
+request.setAttribute( "languagesText", languagesText );
+request.setAttribute( "languagesUrl", languagesUrl );
+request.setAttribute( "mediaText", mediaText );
+request.setAttribute( "mediaUrl", mediaUrl );
+request.setAttribute( "vtbeText", vtbeText );
+request.setAttribute( "vtbeUrl", vtbeUrl );
+%>
+<bbNG:pageHeader instructions="<%=pageInstructions%>">
+    <bbNG:breadcrumbBar environment="PORTAL" >
+        <bbNG:breadcrumb> <%=breadcrumbName%></bbNG:breadcrumb>
+    </bbNG:breadcrumbBar>
+    <bbNG:pageTitleBar iconUrl="../images/plum.png" showTitleBar="true" title="<%=breadcrumbName%>"/>
+</bbNG:pageHeader>
+
+<bbNG:actionControlBar>
+    <bbNG:actionButton title="<%=actionButton1Title%>" url="<%=actionButton1Url%>" primary="true"/>
+    <% if(displayOffCampusButton){ %>
+        <bbNG:actionButton title="<%=actionButton2Title%>" url="<%=actionButton2Url%>" primary="true"/>
+    <% } %>
+    
+    <bbNG:actionMenu title="<%=otherTests%>" primary="true">
+        <bbNG:actionMenuItem title="${ languagesText }" href="${ languagesUrl }"/>
+        <bbNG:actionMenuItem title="${ mediaText }" href="${ mediaUrl }"/>
+        <bbNG:actionMenuItem title="${ vtbeText }" href="${ vtbeUrl }"/>
+    </bbNG:actionMenu>
+    
+    <bbNG:actionButton title="<%=actionButton3Title%>" url="<%=actionButton3Url%>" primary="false"/>
+</bbNG:actionControlBar>
+
+<%
+    out.print("<p><span class=\"browserSectionHeader\">");
+    out.print(rBundle.getString("testBrowser.yourComputer"));
+    out.print("</span><br>\n");
+    
+    out.print("<i>");
+    out.print(rBundle.getString("testBrowser.yourComputer.text"));
+    out.print("</i></p>\n");
+    
+    // new: get the browser from the request
+    String browserSettings = request.getHeader("User-Agent");
+    out.println("<p>");
+    if(browserSettings.toLowerCase().contains("msie")){
+        // warn the user they may be swamped with security warnings
+        out.print(rBundle.getString("testBrowser.ie.security.warning"));
+        out.print("<br><br>");
+    }
+    out.print(rBundle.getString("testBrowser.BrowserName"));
+    out.print("<b>");
+    out.print(browserSettings);
+    out.print("</b><br>");
+%>
+
+<script type="text/javascript">
+  <!--
+  // get the details of the browser, etc.
+  var x = navigator;
+  // var userAgent = x.userAgent.toLowerCase();
+  // var ie  = (userAgent.indexOf("msie") != -1);
+  //   if(ie){
+        // warn the user they may be swamped with security warnings
+  //      document.write("<%=rBundle.getString("testBrowser.ie.security.warning")%><br><br>");
+  //  }
+  // browser type:
+  // document.write("<%=rBundle.getString("testBrowser.BrowserName")%> <b> " + x.userAgent + "</b><br>");
+  document.write("<%=rBundle.getString("testBrowser.Platform")%> <b> " + x.platform + "</b><br>");
+  // and now the screen resolution
+  document.write("<%=rBundle.getString("testBrowser.resolution")%>");
+  document.write(" <b>"+screen.width+" x "+screen.height+"</b>");
+  if(screen.width<800){
+        document.write("<br><%=rBundle.getString("testBrowser.resolution.warning")%>");
+  }
+  //--> 
+</script>
+<%
+out.print("</p>");
+if(hOptions.isBbWikiLinkDisplayed()){
+    out.println(hOptions.getBbWikiUrlAsParagraph());
+}
+%>
+<br>
+<script type="text/javascript">
+<!--
+	document.write("<p><span class=\"browserSectionHeader\"><%=rBundle.getString("testBrowser.Required")%></span><br>");
+	document.write("<i><%=rBundle.getString("testBrowser.Required.text")%></i></p>");
+	document.write("<div class=\"passedTest\">");
+	document.write("<%=rBundle.getString("testBrowser.Required.javascript")%></div>");
+	
+//-->
+</script>
+<noscript>
+	<p><span class='browserSectionFailedHeader'><%=rBundle.getString("testBrowser.Required.javascriptFail")%></span></p>
+        <div class="failedTest">
+	<%=rBundle.getString("testBrowser.Required.javascriptFail.text")%>
+        </div>
+</noscript>
+
+<script type="text/javascript">
+<!--
+if (hasCookies) {
+	
+        document.write("<div class=\"passedTest\">");
+        document.write("<%=rBundle.getString("testBrowser.Required.Cookies")%>");
+        document.write("</div>"); 
+} else {
+	document.write("<div class=\"failedTest\">");
+        document.write("<%=rBundle.getString("testBrowser.Required.CookiesFail")%>");
+        document.write("</div>"); 
+}
+//-->
+</script>
+<script type="text/javascript">
+<!--
+if (hasJava) {
+        document.write("<div class=\"passedTest\">");
+        document.write("<%=rBundle.getString("testBrowser.Required.Java")%> ");
+        document.write("<b><%=System.getProperty("java.version")%></b><br>");
+        document.write("<%=rBundle.getString("testBrowser.Required.JavaTest")%>");
+        document.write("</div>");
+} else {
+        document.write("<div class=\"failedTest\">");
+        document.write("<%=rBundle.getString("testBrowser.Required.JavaFail")%> ");
+        document.write("<b><%=System.getProperty("java.version")%></b>");
+        document.write("</div>");
+}
+document.write("</p>");
+//-->
+</script>
+
+<br>
+    <p><span class="browserSectionHeader"><%=rBundle.getString("testBrowser.Optional")%></span><br>
+<i><%=rBundle.getString("testBrowser.Optional.text")%></i></p>
+
+<script type="text/javascript">
+<!--
+document.write("<p>");
+if (hasFlash) {
+    document.write("<div class=\"passedTest\">");
+    document.write("<%=rBundle.getString("testBrowser.Optional.Flash")%>");
+    document.write("</div>");
+} else {
+    document.write("<div class=\"failedOptionalTest\">");
+    document.write("<%=rBundle.getString("testBrowser.Optional.FlashFail")%>");
+    document.write("</div>");
+}    
+
+if (hasShockwave) {
+    document.write("<div class=\"passedTest\">");
+    document.write("<%=rBundle.getString("testBrowser.Optional.Shockwave")%>");
+    document.write("</div>");
+} else {
+    document.write("<div class=\"failedOptionalTest\">");
+    document.write("<%=rBundle.getString("testBrowser.Optional.ShockwaveFail")%>");
+    document.write("</div>");
+}        
+
+if (hasWMP) {
+    document.write("<div class=\"passedTest\">");
+    document.write("<%=rBundle.getString("testBrowser.Optional.WMP")%>");
+    document.write("</div>");
+} else {
+    document.write("<div class=\"failedOptionalTest\">");
+    document.write("<%=rBundle.getString("testBrowser.Optional.WMPFail")%>");
+    document.write("</div>");
+}    
+
+if (hasRealPlayer) {
+    document.write("<div class=\"passedTest\">");
+    document.write("<%=rBundle.getString("testBrowser.Optional.Real")%>");
+    document.write("</div>");
+} else {
+    document.write("<div class=\"failedOptionalTest\">");
+    document.write("<%=rBundle.getString("testBrowser.Optional.RealFail")%>");
+    document.write("</div>");
+}    
+
+
+if (hasQuickTime) {
+    document.write("<div class=\"passedTest\">");
+    document.write("<%=rBundle.getString("testBrowser.Optional.QT")%>");
+    document.write("</div>");
+} else {
+    document.write("<div class=\"failedOptionalTest\">");
+    document.write("<%=rBundle.getString("testBrowser.Optional.QTFail")%>");
+    document.write("</div>");
+}
+    
+if (hasSVG) {
+    document.write("<div class=\"passedTest\">");
+    document.write("<%=rBundle.getString("testBrowser.Optional.SVG")%>");
+    document.write("</div>");
+} else {
+    document.write("<div class=\"failedOptionalTest\">");
+    document.write("<%=rBundle.getString("testBrowser.Optional.SVGFail")%>");
+    document.write("</div>");
+}
+document.write("</p>");
+//-->
+</script>
+<noscript><p><div class="failedOptionalTest"><%=rBundle.getString("testBrowser.TestsNotRun")%></div></p></noscript>
+
+<br>
+<p><span class="browserSectionHeader"><%=rBundle.getString("testBrowser.PopUp")%></span><br>
+<%=rBundle.getString("testBrowser.PopUp.text")%></p>
+<% 
+final String testAlert = rBundle.getString("testBrowser.alertTest");
+final String alertClick = "javascript:alert('" + rBundle.getString("testBrowser.AlertMessage") + "');";
+final String testPopup = rBundle.getString("testBrowser.popupTest");
+final String popupClick = "javascript:checkPopUp('" + popUpUrl + "');";
+%>
+<p>
+    <bbNG:button id="alertTest" label="<%=testAlert%>" onClick="<%=alertClick%>"/>&nbsp;
+    <bbNG:button id="popupTest" label="<%=testPopup%>" onClick="<%=popupClick%>"/>
+</p>
+<br>
+    
+<p><span class="browserSectionHeader"><%=rBundle.getString("testBrowser.CommonFiles")%></span><br>
+<%=rBundle.getString("testBrowser.CommonFilesInstructions")%></p>
+
+<% 
+// now get a set of sample files to show
+SampleResourceLoader srLoader = new SampleResourceLoader();
+// create an empty Collection:
+ArrayList sampleList = null;
+srLoader.loadAll();
+if(srLoader.isExceptionCaught()){
+    out.println(srLoader.getErrorMessage());
+} else {
+    // populate the Collection
+    sampleList = srLoader.getSampleList();
+}
+%>
+
+<bbNG:contentList>
+    <% 
+    // now iterate through the list and get the samples:
+    Iterator itr = sampleList.iterator();
+    while(itr.hasNext()){
+        SampleResource sResource = (SampleResource) itr.next();
+        String iconUrlValue = sResource.getResourceIconUrl();
+        String idValue = sResource.getFileExtension();
+        String titleValue = sResource.getFileExtension();
+        String urlValue = sResource.getResourceFileUrl();
+        String bodyValue = sResource.getResourceName();
+        %>
+        <bbNG:contentListItem iconUrl="<%=iconUrlValue%>" id="<%=idValue%>" title="<%=titleValue%>" titleColor="#660066" url="<%=urlValue%>"><%=bodyValue%></bbNG:contentListItem>
+        <%
+    }
+    %>
+</bbNG:contentList>
+  
+<bbNG:okButton url="<%=tabUrl%>"/>
+
+</bbNG:genericPage>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<manifest>
+  <!-- core extension information -->
+    <plugin>
+        <name value= "plugin.Name"/>
+        <handle value= "browserCheck"/>
+        <default-locale value="en_GB"/>
+        <description value= "plugin.Description"/>
+        <version value= "1.0.0"/>
+        <requires>
+            <bbversion value="9.1"/>
+        </requires>
+        <vendor>
+            <id value="ut"/>
+            <name value="University of Toronto"/>
+            <url value="http://www.its.utoronto.ca/" />
+            <description value="plugin.vendor.Description" />
+        </vendor>
+        
+<!--    These two JSPs are displayed when the "remove" and "properties" buttons --> 
+<!--	are pressed on the Building Blocks administration page. 				-->
+<!--    <http-actions>
+            <config value="admin/configure.jsp"/>
+            <remove value="admin/remove.jsp"/>
+        </http-actions>
+ -->    
+        <http-actions><config value="settings/config.jsp"></config></http-actions><application-defs>
+            <application handle="browserCheck" type="shared" use-ssl="false" 
+            	name="TODO Name for your application" can-allow-guest="false">
+                <description>module.Description</description>
+                <links>
+                    <link>
+                        <type value="course_tool"/>
+                        <name value="Example Course tool"/>
+                        <url value="index.jsp" />
+                        <description value="An Example course Tool" />
+                    </link>
+                </links>
+            </application>
+        </application-defs>
+
+<!-- Portal Module Definitions -->
+<module-defs>
+            <module-type ext-ref="browserCheck-module" title="module.type.Title" uicreatable="false">	
+                <jsp-dir>module</jsp-dir> 
+                <jsp>
+                    <view>view.jsp</view> 
+                </jsp>
+            </module-type>
+
+            <module type="browserCheck-module" useraddable="true" isdeletable="false" isdetachable="false" title="module.Title">
+                <description>module.Description</description> 
+                <ExtraInfo /> 
+                <module-groups>
+                    <module-group id="Everyone" />
+                </module-groups>
+            </module>
+        </module-defs>
+<!--  Custom Content Types -->
+        <content-handlers>
+        </content-handlers>
+
+<!-- code permissions required for proper operation -->
+        <permissions>
+            <permission type="attribute" name="user.authinfo" actions="get"/>
+            <permission type="attribute" name="user.personalinfo" actions="get"/>
+            <permission type="java.net.NetPermission" name="*" actions="getCookieHandler"/>
+            <permission type="java.util.PropertyPermission" name="http.strictPostRedirect" actions="write" />
+            <permission type="java.util.PropertyPermission" name="*" actions="read,write"/>
+            <permission type="java.io.FilePermission"  name="&amp;lt;&amp;lt;ALL FILES&amp;gt;&amp;gt;"  actions="read,write,delete,execute" />
+            <permission type="java.lang.RuntimePermission" name="accessDeclaredMembers" actions=""/>
+            <permission type="java.lang.RuntimePermission" name="getProtectionDomain" actions=""/>
+            <permission type="java.lang.RuntimePermission" name="createClassLoader" actions=""/>
+            <permission type="java.lang.RuntimePermission" name="setContextClassLoader" actions=""/>
+            <permission type="java.lang.reflect.ReflectPermission" name="suppressAccessChecks" actions=""/>
+        </permissions>
+
+    </plugin>
+
+</manifest>
