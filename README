@@ -1,1 +1,23 @@
-Blackboard Browser Tester v1.0.0
+Enhanced Blackboard Browser Tester
+===================================
+Description: Blackboard Browser Tester for Release 9 This tool defines a custom portal module which performs a series of diagnostic tests which can help the user and/or a member of the service desk/sys admin resolve common configuration problems.
+License: GNU General Public License (GPL)
+Fork of: Blackboard Browser Tester for Release 9
+Hosted in: http://projects.oscelot.org/gf/project/browsercheck/
+Originally coded by:
+- Malcolm Murray
+- Martin Edney
+- Eric Harvey
+- Timothy Donehower
+- Melissa Zucal
+- Maria Moreno
+
+Enhancements by this release:
+This building block – a Work-In-Progress- is a fork of Durham’s Blackboard Browser Tester b2 written by Malcolm Murray. What I’ve done besides of changing the basic look-and-feel, I customized some of the test elements such as third party components files, and the main layout.
+
+The following tests were added:
+- Connection Speed test (jQuery)
+- Java Plugin test (Applet)
+- Single SignOn test (Shibboleth / Blackboard’s new Auth Framework)
+- Integration with a fork of BrowserCheck.js and plugins.js by Shannon Meisenheimer
+- Integration with feedback.js project by Niklas von Hertzen (http://goo.gl/iAiy8)
