@@ -12,7 +12,7 @@ Originally coded by:
 - Melissa Zucal
 - Maria Moreno
 
-Enhancements by this release:
+Enhancements in this release:
 This building block – a Work-In-Progress- is a fork of Durham’s Blackboard Browser Tester b2 written by Malcolm Murray. What I’ve done besides of changing the basic look-and-feel, I customized some of the test elements such as third party components files, and the main layout.
 
 The following tests were added:
